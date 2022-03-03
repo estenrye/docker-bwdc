@@ -7,6 +7,7 @@ RUN unzip /tmp/bwdc.zip
 FROM alpine:20210804
 COPY --from=download_bwdc /tmp/bwdc /usr/bin/bwdc
 RUN apk --no-cache add \
+      gcompat \
       libc6-compat \
       libstdc++ \
       libsecret
