@@ -5,14 +5,10 @@ RUN apk --no-cache add unzip
 RUN unzip /tmp/bwdc.zip
 
 FROM alpine:20210804
-ENV HOME /home/bwdc
 COPY --from=download_bwdc /tmp/bwdc /usr/bin/bwdc
 RUN apk --no-cache add \
       gcompat \
       libc6-compat \
       libstdc++ \
-      libsecret \
-  && adduser -D $USER
-USER bwdc
-WORKDIR /home/bwdc
+      libsecret
 ENTRYPOINT [ "bwdc" ]
