@@ -11,6 +11,9 @@ RUN apk --no-cache add \
       libc6-compat \
       libstdc++ \
       libsecret \
-  && mkdir -p "/root/.config/Bitwarden\ Directory\ Connector"
-WORKDIR /root
+  && adduser -D bwdc
+USER bwdc
+ENV HOME /home/bwdc
+WORKDIR /home/bwdc
+RUN  mkdir -p /home/bwdc/.config/Bitwarden\ Directory\ Connector
 ENTRYPOINT [ "bwdc" ]
