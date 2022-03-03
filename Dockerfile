@@ -12,7 +12,7 @@ RUN apk --no-cache add \
       libc6-compat \
       libstdc++ \
       libsecret \
-  && adduser -D bwdc
+  && adduser -D $USER
 USER bwdc
 WORKDIR /home/bwdc
 ENTRYPOINT [ "bwdc" ]
