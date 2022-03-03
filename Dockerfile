@@ -10,5 +10,7 @@ RUN apk --no-cache add \
       gcompat \
       libc6-compat \
       libstdc++ \
-      libsecret
+      libsecret \
+  && mkdir -p "/root/.config/Bitwarden\ Directory\ Connector"
+WORKDIR /root
 ENTRYPOINT [ "bwdc" ]
