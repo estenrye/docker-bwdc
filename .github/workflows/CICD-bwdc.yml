@@ -1,45 +1,65 @@
-# This is a basic workflow to help you get started with Actions
+name: Build and Publish
 
-name: CI | Docker | estenrye/bwdc
-
-
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the master branch
+  # run it on push to the default repository branch
   push:
+    branches: [main]
+  # run it during pull request
   pull_request:
 
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
-
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  buildx:
+  # define job to build and publish docker image
+  build-and-push-docker-image:
+    name: Build Docker image and push to repositories
+    # run only when code is compiling and tests are passing
     runs-on: ubuntu-latest
+
+    # steps to perform in job
     steps:
-      - name: Checkout
-        uses: actions/checkout@master
-      - uses: docker/setup-buildx-action@v1
-        id: buildx
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Bump version and push tag
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v6.0
         with:
-          install: true
-      - name: Build
-        run: |
-          docker build . # will run buildx
-  release:
-    if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
-    # The type of runner that the job will run on
-    runs-on: ubuntu-latest
-    environment: Docker
-    # Steps represent a sequence of tasks that will be executed as part of the job
-    steps:
-    - uses: actions/checkout@master
-    - name: Publish to Registry
-      uses: elgohr/Publish-Docker-Github-Action@master
-      with:
-        name: estenrye/bwdc
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
-        tag_semver: true
-        dockerfile: Dockerfile
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create a GitHub release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ steps.tag_version.outputs.new_tag }}
+          name: Release ${{ steps.tag_version.outputs.new_tag }}
+          body: ${{ steps.tag_version.outputs.changelog }}
+
+      # setup Docker buld action
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # - name: Login to Github Packages
+      #   uses: docker/login-action@v1
+      #   with:
+      #     registry: ghcr.io
+      #     username: ${{ github.actor }}
+      #     password: ${{ secrets.GHCR_PAT }}
+      
+      - name: Build image and push to Docker Hub and GitHub Container Registry
+        uses: docker/build-push-action@v2
+        with:
+          # relative path to the place where source code with Dockerfile is located
+          context: ./src/samples/simple
+          # Note: tags has to be all lower-case
+          tags: |
+            estenrye/bwdc:latest
+            estenrye/bwdc:${{ steps.tag_version.outputs.new_tag }}
+          # build on feature branches, push only on main branch
+          push: ${{ github.ref == 'refs/heads/main' }}
+
+      - name: Image digest
+        run: echo ${{ steps.docker_build.outputs.digest }}
