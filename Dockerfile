@@ -6,16 +6,15 @@ RUN unzip /tmp/bwdc.zip
 
 FROM alpine:20210804
 COPY --from=download_bwdc /tmp/bwdc /usr/bin/bwdc
-RUN  apk --no-cache add \
-       gcompat \
-       gnupg \
-       libc6-compat \
-       libstdc++ \
-       libsecret \
-       pass \
+RUN apk --no-cache add \
+      gcompat \
+      libc6-compat \
+      libstdc++ \
+      libsecret \
   && adduser -D bwdc \
   && echo 'a11dba5feedc01ddeadda7a2beefc0de' >  /etc/machine-id
 USER bwdc
 ENV HOME /home/bwdc
 WORKDIR /home/bwdc
 RUN  mkdir -p /home/bwdc/.config/Bitwarden\ Directory\ Connector
+ENTRYPOINT [ "bwdc" ]
