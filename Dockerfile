@@ -13,7 +13,8 @@ RUN apk --no-cache add \
       libsecret \
   && adduser -D bwdc
 USER bwdc
-ENV HOME /home/bwdc
+ENV HOME=/home/bwdc \
+    BITWARDENCLI_CONNECTOR_PLAINTEXT_SECRETS=true
 WORKDIR /home/bwdc
 RUN  mkdir -p /home/bwdc/.config/Bitwarden\ Directory\ Connector
 ENTRYPOINT [ "bwdc" ]
