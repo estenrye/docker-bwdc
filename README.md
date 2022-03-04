@@ -1,3 +1,16 @@
+## <a name="run"></a> How to Run Bitwarden Directory Connector
+
+```bash
+docker pull estenrye/bwdc:latest
+
+mkdir ~/.bwdc_config
+docker run \
+  -v ~/.bwdc_config:/home/bwdc/.config/Bitwarden\ Directory\ Connector \
+  -e BW_CLIENTID="organization.b5351047-89b6-820f-ad21016b6222" \
+  -e BW_CLIENTSECRET="yUMB4trbqV1bavhEHGqbuGpz4AlHm9"
+  estenrye/bwdc:latest login
+```
+
 ## <a name="commits"></a> Git Commit Guidelines
 
 We have very precise rules over how our git commit messages can be formatted.  This leads to **more
