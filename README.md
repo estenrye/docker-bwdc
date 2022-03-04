@@ -22,15 +22,22 @@ sed "s/o=JUMPCLOUD_ORG_ID/${BW_JUMPCLOUD_ORG_ID}/" -i ${CONFIG_DIR}/data.json
 
 docker pull estenrye/bwdc:latest
 
+# Authenticate bwdc to Bitwarden
 docker run \
   -v $CONFIG_DIR:/home/bwdc/.config/Bitwarden\ Directory\ Connector \
   -e BW_CLIENTID=$BW_CLIENTID \
   -e BW_CLIENTSECRET=$BW_CLIENTSECRET
   estenrye/bwdc:latest login
 
+# Test the sync configuration.
 docker run \
   -v $CONFIG_DIR:/home/bwdc/.config/Bitwarden\ Directory\ Connector \
   estenrye/bwdc:latest test
+
+# Run the directory sync.
+docker run \
+  -v $CONFIG_DIR:/home/bwdc/.config/Bitwarden\ Directory\ Connector \
+  estenrye/bwdc:latest sync
 ```
 
 ## <a name="commits"></a> Git Commit Guidelines
