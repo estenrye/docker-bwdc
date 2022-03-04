@@ -1,14 +1,36 @@
 ## <a name="run"></a> How to Run Bitwarden Directory Connector
 
 ```bash
+# These credentials are taken from the bwdc documentation.  Change them.
+BW_CLIENTID="organization.b5351047-89b6-820f-ad21016b6222"
+BW_CLIENTSECRET="yUMB4trbqV1bavhEHGqbuGpz4AlHm9"
+BW_ORG_ID=`sed 's/^organization\.//' <<< ${BW_CLIENTID}`
+BW_JUMPCLOUD_ORG_ID='YOUR_ORG_ID'
+BW_JUMPCLOUD_BIND_USER='LDAP_BIND_USER'
+BW_JUMPCLOUD_BIND_PASS='PLAINTEXT_PASSWORD'
+
+# Here we use the config_examples directory for the bwdc config.
+# data.json is in the .gitignore
+CONFIG_DIR=`realpath ./config_examples`
+cp ${CONFIG_DIR}/jumpcloud.json ${CONFIG_DIR}/data.json
+
+# Replace values in bwdc config
+sed "s/BITWARDEN_ORG_ID/${BW_ORG_ID}/" -i ${CONFIG_DIR}/data.json
+sed "s/LDAP_BIND_PASSWORD/${BW_JUMPCLOUD_BIND_PASS}/" -i ${CONFIG_DIR}/data.json
+sed "s/LDAP_BIND_USERNAME/${BW_JUMPCLOUD_BIND_USER}/" -i ${CONFIG_DIR}/data.json
+sed "s/o=JUMPCLOUD_ORG_ID/${BW_JUMPCLOUD_ORG_ID}/" -i ${CONFIG_DIR}/data.json
+
 docker pull estenrye/bwdc:latest
 
-mkdir ~/.bwdc_config
 docker run \
-  -v ~/.bwdc_config:/home/bwdc/.config/Bitwarden\ Directory\ Connector \
-  -e BW_CLIENTID="organization.b5351047-89b6-820f-ad21016b6222" \
-  -e BW_CLIENTSECRET="yUMB4trbqV1bavhEHGqbuGpz4AlHm9"
+  -v $CONFIG_DIR:/home/bwdc/.config/Bitwarden\ Directory\ Connector \
+  -e BW_CLIENTID=$BW_CLIENTID \
+  -e BW_CLIENTSECRET=$BW_CLIENTSECRET
   estenrye/bwdc:latest login
+
+docker run \
+  -v $CONFIG_DIR:/home/bwdc/.config/Bitwarden\ Directory\ Connector \
+  estenrye/bwdc:latest test
 ```
 
 ## <a name="commits"></a> Git Commit Guidelines

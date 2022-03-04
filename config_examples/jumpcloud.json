@@ -1,0 +1,47 @@
+{
+  "authenticatedAccounts": [
+    "BITWARDEN_ORG_ID"
+  ],
+  "BITWARDEN_ORG_ID": {
+    "directoryConnections": {
+			"ldap": {
+				"ssl": true,
+				"startTls": false,
+				"sslAllowUnauthorized": false,
+				"port": "636",
+				"currentUser": false,
+				"ad": false,
+				"pagedSearch": false,
+				"hostname": "ldap.jumpcloud.com",
+				"password": "LDAP_BIND_PASSWORD",
+				"rootPath": "dc=jumpcloud,dc=com",
+				"username": "uid=LDAP_BIND_USERNAME,ou=Users,o=JUMPCLOUD_ORG_ID,dc=jumpcloud,dc=com"
+			}
+    },
+		"directorySettings": {
+			"directoryType": 0,
+			"organizationId": "BITWARDEN_ORG_ID",
+			"sync": {
+				"users": true,
+				"groups": true,
+				"interval": 5,
+				"removeDisabled": true,
+				"overwriteExisting": true,
+				"largeImport": true,
+				"useEmailPrefixSuffix": false,
+				"creationDateAttribute": "creationTimestamp",
+				"revisionDateAttribute": "modifyTimestamp",
+				"emailPrefixAttribute": "uid",
+				"memberAttribute": "member",
+				"userObjectClass": "inetOrgPerson",
+				"groupObjectClass": "groupOfNames",
+				"userEmailAttribute": "mail",
+				"groupNameAttribute": "cn",
+				"groupPath": "ou=Users,o=JUMPCLOUD_ORG_ID",
+				"userPath": "ou=Users,o=JUMPCLOUD_ORG_ID",
+				"userFilter": "(memberOf=cn=App_Bitwarden,ou=Users,o=JUMPCLOUD_ORG_ID,dc=jumpcloud,dc=com)",
+				"groupFilter": "(cn=App_Bitwarden*)"
+			}
+		}
+  }
+}
