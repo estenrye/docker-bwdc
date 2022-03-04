@@ -11,7 +11,8 @@ RUN apk --no-cache add \
       libc6-compat \
       libstdc++ \
       libsecret \
-  && adduser -D bwdc
+  && adduser -D bwdc \
+  && echo 'alldba5feedc01ddeadda7a2beefc0de' >  /etc/machine-id
 USER bwdc
 ENV HOME /home/bwdc
 WORKDIR /home/bwdc
