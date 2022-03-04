@@ -12,7 +12,7 @@ RUN apk --no-cache add \
       libstdc++ \
       libsecret \
   && adduser -D bwdc \
-  && echo 'alldba5feedc01ddeadda7a2beefc0de' >  /etc/machine-id
+  && echo 'a11dba5feedc01ddeadda7a2beefc0de' >  /etc/machine-id
 USER bwdc
 ENV HOME /home/bwdc
 WORKDIR /home/bwdc
