@@ -44,6 +44,7 @@ jobs:
       #     password: ${{ secrets.GHCR_PAT }}
       
       - name: Build image and push to Docker Hub and GitHub Container Registry
+        id: docker_build
         uses: docker/build-push-action@v2
         with:
           # relative path to the place where source code with Dockerfile is located
@@ -65,11 +66,10 @@ jobs:
             
             ### Docker Artifacts
 
-            Image Digest: `${{ steps.docker_build.outputs.digest }}`
+            Image Digest: ${{ steps.docker_build.outputs.digest }}
 
             ```bash
-            ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_IMAGENAME }}:latest
-            ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_IMAGENAME }}:${{ steps.tag_version.outputs.new_tag }}
+            docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_IMAGENAME }}:${{ steps.tag_version.outputs.new_tag }}
             ```
 
       - name: Image digest
