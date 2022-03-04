@@ -25,13 +25,6 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Create a GitHub release
-        uses: ncipollo/release-action@v1
-        with:
-          tag: ${{ steps.tag_version.outputs.new_tag }}
-          name: Release ${{ steps.tag_version.outputs.new_tag }}
-          body: ${{ steps.tag_version.outputs.changelog }}
-
       # setup Docker buld action
       - name: Set up Docker Buildx
         id: buildx
@@ -61,6 +54,23 @@ jobs:
             ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_IMAGENAME }}:${{ steps.tag_version.outputs.new_tag }}
           # build on feature branches, push only on main branch
           push: ${{ github.ref == 'refs/heads/main' }}
+
+      - name: Create a GitHub release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ steps.tag_version.outputs.new_tag }}
+          name: Release ${{ steps.tag_version.outputs.new_tag }}
+          body: |
+            ${{ steps.tag_version.outputs.changelog }}
+            
+            ### Docker Artifacts
+
+            Image Digest: `${{ steps.docker_build.outputs.digest }}`
+
+            ```bash
+            ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_IMAGENAME }}:latest
+            ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_IMAGENAME }}:${{ steps.tag_version.outputs.new_tag }}
+            ```
 
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
