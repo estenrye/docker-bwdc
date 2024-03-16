@@ -1,10 +1,10 @@
-FROM alpine:20220328 as download_bwdc
+FROM alpine:20240315 as download_bwdc
 WORKDIR /tmp
 ADD https://vault.bitwarden.com/download/?app=connector&platform=linux&variant=cli-zip /tmp/bwdc.zip
 RUN apk --no-cache add unzip
 RUN unzip /tmp/bwdc.zip
 
-FROM alpine:20220328
+FROM alpine:20240315
 COPY --from=download_bwdc /tmp/bwdc /usr/bin/bwdc
 RUN apk --no-cache add \
       gcompat \
